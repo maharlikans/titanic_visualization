@@ -1,0 +1,27 @@
+circle {
+    fill: orange;
+    stroke: black;
+    stroke-width: 0.7;
+    opacity: 0.7;
+}
+
+h2 {
+    text-align: center;
+    color: black;
+}
+
+div.years_buttons {
+    position: fixed;
+    top: 5px;
+    left: 50px;
+}
+
+div.years_buttons div {
+    background-color: rgb(251, 201, 127);
+    padding: 3px;
+    margin: 7px;
+}
+
+g.main {
+    pointer-events: all;
+}
