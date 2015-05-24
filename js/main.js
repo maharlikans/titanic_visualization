@@ -58,7 +58,7 @@ function draw(geo_data) {
                    .style('text-anchor', 'middle')
                    .text(function(d){return d;});
 
-    main_navigation.on('mouseover', function() {
+    main_navigation.on('mouseenter', function() {
       main_navigation
         .transition()
         .duration(default_duration)
@@ -68,37 +68,30 @@ function draw(geo_data) {
          .transition()
          .duration(default_duration)
          .style('stroke-width', 3);
-    });
 
-    main_navigation.on('mouseout', function() {
       main_navigation
         .transition()
         .duration(default_duration)
-        .style('opacity', .5);
+        .style('opacity', 0)
+        .remove();
 
-      svg.select('circle')
-         .transition()
-         .duration(default_duration)
-         .style('stroke-width', 1);
-    });
-
-    main_navigation.on('click', function() {
-      main_navigation
-         .transition()
-         .duration(default_duration)
-         .style('opacity', 0)
-         .remove();
+      main_navigation.select('circle')
+        .transition()
+        .duration(default_duration)
+        .attr('r', 0);
     });
 
     window.setTimeout(function() {
       main_navigation
         .transition()
         .duration(fade_duration)
-        .style('opacity', .5);
+        .style('opacity', 1);
     }, fade_duration);
 
     function explode() {
       var rotation_radius = 400;
+      var num_circles = 3;
+      var circles = [];
 
     }
   
