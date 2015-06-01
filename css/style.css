@@ -22,6 +22,7 @@ div.years_buttons div {
     margin: 7px;
 }
 
-g.main {
+g.main, g.orbit {
+    cursor:pointer;
     pointer-events: all;
 }
