@@ -14,6 +14,14 @@ function draw(geo_data) {
     var orbital_font = 'Lato';
     var title_font_size = 24;
 
+    // orbit properties
+    var rotation_radius = 200;
+    var num_circles = 3;
+    var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
+    var identifiers = ['class-orbit', 'sex-orbit', 'age-orbit'];
+    var circles = [];
+    var radians_in_circle = 2*Math.PI;
+
     var svg = d3.select("body")
         .append("svg")
         .attr("width", width + margin)
@@ -91,16 +99,15 @@ function draw(geo_data) {
     }, fade_duration);
 
     function explode() {
-      var rotation_radius = 200;
-      var num_circles = 3;
-      var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
-      var circles = [];
-      var radians_in_circle = 2*Math.PI;
 
+      // form the group element for each of the circles, setting their location,
+      // text, and mouse events
       for (var i = 0; i < num_circles; i++) {
-        var new_group = svg.append('g').attr('class', 'orbit');
+        var new_group = svg.append('g')
+          .attr('class', 'orbit')
+          .attr('id', identifiers[i]);
         var theta = Math.PI/2 + i*(radians_in_circle/num_circles);
-        var cartesian_coordinates = polar_to_cartesian(rotation_radius, theta);
+        var cartesian_coordinates = polarToCartesianCoordinates(rotation_radius, theta);
         var current_text = category_text[i];
         var new_x = center_x - cartesian_coordinates['x'];
         var new_y = center_y - cartesian_coordinates['y'];
@@ -147,9 +154,7 @@ function draw(geo_data) {
               .transition()
               .duration(default_duration)
               .attr('fill', 'white');
-          });
-
-        svg.selectAll('g.orbit')
+          })
           .on('mouseout', function() {
             var orbit = d3.select(this);
 
@@ -162,17 +167,37 @@ function draw(geo_data) {
               .transition()
               .duration(default_duration)
               .attr('fill', 'black');
+          })
+          .on('click', function() {
+            var clicked_orbit = d3.select(this);
+            var clicked_id = clicked_orbit.attr('id');
+
+            for (var i = 0; i < identifiers.length; i++) {
+              if (!(clicked_id == identifiers[i])) {
+                var other_orbit = d3.select('g#' + identifiers[i]);
+                other_orbit.transition()
+                  .duration(500)
+                  .attr('transform', 'translate(1000, 0)');
+              }
+            }
+
+            clicked_orbit.transition()
+              .duration(500)
+              .attr('transform', )
+
           });
+
       }
+
+      function pullOrbitsOffscreen() {
+        // move class 
+      }
+
 
       window.setTimeout(setOrbitMouseEvents, 500);
     }
 
-    function scatter_others(clicked_circle) {
-      // mark the selected circle with 'selected'
-    }
-
-    function polar_to_cartesian(r, theta) {
+    function polarToCartesianCoordinates(r, theta) {
       var cartesian_coordinates = [];
       var x = r*Math.cos(theta);
       var y = r*Math.sin(theta);
