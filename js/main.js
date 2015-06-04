@@ -25,6 +25,10 @@ function draw(geo_data) {
     var circles = [];
     var radians_in_circle = 2*Math.PI;
 
+    // where the clicked circle will sit
+    var back_circle_x = width * (7.0/8.0);
+    var back_circle_y = height * (1.0/5.0);
+
     var svg = d3.select("body")
         .append("svg")
         .attr("width", width + margin)
@@ -172,10 +176,7 @@ function draw(geo_data) {
 
             clicked_orbit.transition()
               .duration(long_duration)
-              .attr('transform', 'translate(' + center_x + ',' + center_y + ')')
-              .transition()
-              .duration(default_duration)
-              .style('opacity', 0);
+              .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')');
 
             for (var i = 0; i < identifiers.length; i++) {
               if (!(clicked_id == identifiers[i])) {
@@ -191,11 +192,6 @@ function draw(geo_data) {
           });
 
       }
-
-      function pullOrbitsOffscreen() {
-        // move class 
-      }
-
 
       window.setTimeout(setOrbitMouseEvents, 500);
     }
