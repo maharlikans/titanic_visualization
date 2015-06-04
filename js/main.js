@@ -20,8 +20,8 @@ function draw(geo_data) {
     var num_circles = 3;
     var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
     var identifiers = ['class-orbit', 'sex-orbit', 'age-orbit'];
-    var x_move = {'class-orbit':0, 'sex-orbit':1000, 'age-orbit':-1000};
-    var y_move = {'class-orbit':-1000, 'sex-orbit':1000, 'age-orbit':1000};
+    var x_move_offscreen = {'class-orbit':0, 'sex-orbit':1000, 'age-orbit':-1000};
+    var y_move_offscreen = {'class-orbit':-1000, 'sex-orbit':1000, 'age-orbit':1000};
     var circles = [];
     var radians_in_circle = 2*Math.PI;
 
@@ -174,7 +174,7 @@ function draw(geo_data) {
               .duration(long_duration)
               .attr('transform', 'translate(' + center_x + ',' + center_y + ')')
               .transition()
-              .duration(long_duration)
+              .duration(default_duration)
               .style('opacity', 0);
 
             for (var i = 0; i < identifiers.length; i++) {
@@ -184,9 +184,8 @@ function draw(geo_data) {
                 var current_y = other_orbit.node().getBBox().y;
                 other_orbit.transition()
                   .duration(default_duration)
-                  .attr('transform', 'translate(' + (center_x + current_x + x_move[identifiers[i]]) + ',' + (center_y + current_y + y_move[identifiers[i]]) + ')');
+                  .attr('transform', 'translate(' + (center_x + current_x + x_move_offscreen[identifiers[i]]) + ',' + (center_y + current_y + y_move_offscreen[identifiers[i]]) + ')');
               }
-
             }
 
           });
