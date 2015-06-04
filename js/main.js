@@ -183,7 +183,7 @@ function draw(geo_data) {
 
             clicked_orbit.transition()
               .duration(500)
-              .attr('transform', )
+              .style('opacity', 0);
 
           });
 
