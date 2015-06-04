@@ -20,6 +20,8 @@ function draw(geo_data) {
     var num_circles = 3;
     var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
     var identifiers = ['class-orbit', 'sex-orbit', 'age-orbit'];
+    var orbit_default_x = {};
+    var orbit_default_y = {};
     var x_move = {'class-orbit':0, 'sex-orbit':1000, 'age-orbit':-1000};
     var y_move = {'class-orbit':-1000, 'sex-orbit':1000, 'age-orbit':1000};
     var circles = [];
@@ -104,6 +106,8 @@ function draw(geo_data) {
         var current_text = category_text[i];
         var new_x = -cartesian_coordinates['x'];
         var new_y = -cartesian_coordinates['y'];
+        orbit_default_x[identifiers[i]] = center_x + new_x;
+        orbit_default_y[identifiers[i]] = center_y + new_y;
 
         var new_group = svg.append('g')
           .attr('class', 'orbit')
@@ -167,34 +171,44 @@ function draw(geo_data) {
               .attr('fill', 'black');
           })
           .on('click', function() {
-            var clicked_orbit = d3.select(this);
-            var clicked_id = clicked_orbit.attr('id');
-
-            clicked_orbit.transition()
-              .duration(long_duration)
-              .attr('transform', 'translate(' + center_x + ',' + center_y + ')')
-              .transition()
-              .duration(long_duration)
-              .style('opacity', 0);
 
             for (var i = 0; i < identifiers.length; i++) {
-              if (!(clicked_id == identifiers[i])) {
-                var other_orbit = d3.select('g#' + identifiers[i]);
-                var current_x = other_orbit.node().getBBox().x;
-                var current_y = other_orbit.node().getBBox().y;
-                other_orbit.transition()
-                  .duration(default_duration)
-                  .attr('transform', 'translate(' + (center_x + current_x + x_move[identifiers[i]]) + ',' + (center_y + current_y + y_move[identifiers[i]]) + ')');
-              }
-
+              var current_orbit = d3.select('g#' + identifiers[i]);
+              var current_x = current_orbit.node().getBBox().x;
+              var current_y = current_orbit.node().getBBox().y;
+              current_orbit.transition()
+                .duration(default_duration)
+                .attr('transform', 'translate(' + (center_x + current_x + x_move[identifiers[i]]) + ',' + (center_y + current_y + y_move[identifiers[i]]) + ')');
             }
 
+            var clicked_orbit = d3.select(this);
+            window.setTimeout(bringClickedOrbitBack, 1000, clicked_orbit);
           });
 
       }
 
+      function bringClickedOrbitBack(clicked_orbit) {
+        var clicked_id = clicked_orbit.attr('id');
+        var clicked_current_x = clicked_orbit.node().getBBox().x;
+        var clicked_current_y = clicked_orbit.node().getBBox().y;
+
+        clicked_orbit.transition()
+          .duration(long_duration)
+          .attr('transform', 'translate(' + orbit_default_x[clicked_id] + ',' + orbit_default_y[clicked_id] + ')');
+      }
+
       function pullOrbitsOffscreen() {
-        // move class 
+        var clicked_orbit = d3.select(this);
+        var clicked_id = clicked_orbit.attr('id');
+
+        for (var i = 0; i < identifiers.length; i++) {
+            var current_orbit = d3.select('g#' + identifiers[i]);
+            var current_x = current_orbit.node().getBBox().x;
+            var current_y = current_orbit.node().getBBox().y;
+            current_orbit.transition()
+              .duration(default_duration)
+              .attr('transform', 'translate(' + (center_x + current_x + x_move[identifiers[i]]) + ',' + (center_y + current_y + y_move[identifiers[i]]) + ')');
+        }
       }
 
 
