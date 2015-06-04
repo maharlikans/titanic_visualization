@@ -44,12 +44,13 @@ function draw(geo_data) {
 
     var main_navigation = svg.append('g')
                              .attr('class', 'main')
+                             .attr('transform', 'translate(' + center_x + ',' + center_y + ')')
                              .style('opacity', 0);
 
     main_navigation.append('circle')
                    .attr('r', main_radius)
-                   .attr('cx', center_x)
-                   .attr('cy', center_y)
+                   .attr('cx', 0)
+                   .attr('cy', 0)
                    .style('fill', '#38BDFF')
                    .style('stroke', 'black')
                    .style('stroke-width', 0.5);
@@ -58,9 +59,9 @@ function draw(geo_data) {
                    .data(titantic_title)
                    .enter()
                    .append('text')
-                   .attr('x', center_x)
+                   .attr('x', 0)
                    .attr('y', function(d, i) {
-                     return center_y + i*title_font_size;
+                     return i*title_font_size;
                    })
                    .attr('class', 'title-text')
                    .attr('font-family', font)
@@ -85,8 +86,8 @@ function draw(geo_data) {
         .transition()
         .duration(default_duration)
         .attr('font-size', 0)
-        .attr('x', center_x)
-        .attr('y', center_y);
+        .attr('x', 0)
+        .attr('y', 0);
 
       explode();
     });
