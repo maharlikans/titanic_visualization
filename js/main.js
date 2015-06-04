@@ -9,6 +9,7 @@ function draw(geo_data) {
     var main_radius = 200;
     var smaller_radius = 80;
     var default_duration = 300;
+    var long_duration = default_duration*2;
     var fade_duration = 500;
     var font = 'Lato';
     var orbital_font = 'Lato';
@@ -19,6 +20,8 @@ function draw(geo_data) {
     var num_circles = 3;
     var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
     var identifiers = ['class-orbit', 'sex-orbit', 'age-orbit'];
+    var x_move = {'class-orbit':0, 'sex-orbit':1000, 'age-orbit':-1000};
+    var y_move = {'class-orbit':-1000, 'sex-orbit':1000, 'age-orbit':1000};
     var circles = [];
     var radians_in_circle = 2*Math.PI;
 
@@ -28,14 +31,6 @@ function draw(geo_data) {
         .attr("height", height + margin)
         .append('g')
         .attr('class', 'screen');
-
-    var years = [];
-
-    for(var i = 1930; i < 2015; i += 4) {
-      if(i !== 1942 && i !== 1946) {
-        years.push(i);
-      };
-    }
 
     var titantic_title = [
       'WHO LIVED AND WHO DIED',
@@ -104,41 +99,43 @@ function draw(geo_data) {
       // form the group element for each of the circles, setting their location,
       // text, and mouse events
       for (var i = 0; i < num_circles; i++) {
-        var new_group = svg.append('g')
-          .attr('class', 'orbit')
-          .attr('id', identifiers[i]);
         var theta = Math.PI/2 + i*(radians_in_circle/num_circles);
         var cartesian_coordinates = polarToCartesianCoordinates(rotation_radius, theta);
         var current_text = category_text[i];
-        var new_x = center_x - cartesian_coordinates['x'];
-        var new_y = center_y - cartesian_coordinates['y'];
+        var new_x = -cartesian_coordinates['x'];
+        var new_y = -cartesian_coordinates['y'];
+
+        var new_group = svg.append('g')
+          .attr('class', 'orbit')
+          .attr('id', identifiers[i])
+          .attr('transform', 'translate(' + center_x + ',' + center_y + ')');
 
         var circle = new_group.append('circle')
           .attr('class', 'orbital-circle')
           .attr('r', 0)
-          .attr('cx', center_x)
-          .attr('cy', center_y)
+          .attr('cx', 0)
+          .attr('cy', 0)
           .transition()
           .duration(1000)
-          .attr('r', smaller_radius)
-          .attr('cx', new_x)
-          .attr('cy', new_y);
+          .attr('r', smaller_radius);
 
         new_group.append('text')
           .attr('class', 'orbital-circle-text')
-          .attr('x', center_x)
-          .attr('y', center_y)
+          .attr('x', 0)
+          .attr('y', title_font_size/2)
           .attr('font-size', '0px')
           .attr('fill', 'white')
           .transition()
           .duration(1000)
-          .attr('x', new_x)
-          .attr('y', new_y + title_font_size/2)
           .attr('font-family', font)
           .attr('font-size', title_font_size + 'px')
           .attr('fill', 'black')
           .style('text-anchor', 'middle')
           .text(category_text[i]);
+
+        new_group.transition()
+          .duration(1000)
+          .attr('transform', 'translate(' + (center_x + new_x)  + ',' + (center_y + new_y) + ')');
       }
 
       function setOrbitMouseEvents() {
@@ -173,18 +170,24 @@ function draw(geo_data) {
             var clicked_orbit = d3.select(this);
             var clicked_id = clicked_orbit.attr('id');
 
+            clicked_orbit.transition()
+              .duration(long_duration)
+              .attr('transform', 'translate(' + center_x + ',' + center_y + ')')
+              .transition()
+              .duration(long_duration)
+              .style('opacity', 0);
+
             for (var i = 0; i < identifiers.length; i++) {
               if (!(clicked_id == identifiers[i])) {
                 var other_orbit = d3.select('g#' + identifiers[i]);
+                var current_x = other_orbit.node().getBBox().x;
+                var current_y = other_orbit.node().getBBox().y;
                 other_orbit.transition()
-                  .duration(500)
-                  .attr('transform', 'translate(1000, 0)');
+                  .duration(default_duration)
+                  .attr('transform', 'translate(' + (center_x + current_x + x_move[identifiers[i]]) + ',' + (center_y + current_y + y_move[identifiers[i]]) + ')');
               }
-            }
 
-            clicked_orbit.transition()
-              .duration(500)
-              .style('opacity', 0);
+            }
 
           });
 
