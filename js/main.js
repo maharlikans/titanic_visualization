@@ -176,28 +176,7 @@ function draw(geo_data) {
               .duration(default_duration)
               .attr('fill', 'black');
           })
-          .on('click', function() {
-            var clicked_orbit = d3.select(this);
-            var clicked_id = clicked_orbit.attr('id');
-
-            clicked_orbit.transition()
-              .duration(long_duration)
-              .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')');
-
-            setClickedOrbitReturnOnClickEvent(clicked_orbit);
-
-            for (var i = 0; i < identifiers.length; i++) {
-              if (!(clicked_id == identifiers[i])) {
-                var other_orbit = d3.select('g#' + identifiers[i]);
-                var current_x = other_orbit.node().getBBox().x;
-                var current_y = other_orbit.node().getBBox().y;
-                other_orbit.transition()
-                  .duration(default_duration)
-                  .attr('transform', 'translate(' + (center_x + current_x + x_move_offscreen[identifiers[i]]) + ',' + (center_y + current_y + y_move_offscreen[identifiers[i]]) + ')');
-              }
-            }
-
-          });
+          .call(setClickedOrbitScatterOnClickEvent);
 
       }
 
@@ -228,8 +207,12 @@ function draw(geo_data) {
       });
     }
 
+    // sets event on clicked orbit to return it and all other orbits to their
+    // original locations at the beginning of the visualization
     function setClickedOrbitReturnOnClickEvent(clicked_orbit) {
       clicked_orbit.on('click', function() {
+        var clicked_orbit = d3.select(this);
+
         // for each of the orbits, return them to their original location
         for (var i = 0; i < identifiers.length; i++) {
           var current_orbit_id = identifiers[i];
