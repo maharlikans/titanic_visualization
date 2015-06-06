@@ -15,10 +15,14 @@ function draw(geo_data) {
     var orbital_font = 'Lato';
     var title_font_size = 24;
 
+    // strings
+    var back_text = '<- BACK?';
+
     // orbit properties
     var rotation_radius = 200;
     var num_circles = 3;
     var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
+    var id_to_category_map = {'class-orbit':'BY CLASS?', 'sex-orbit':'BY SEX?', 'age-orbit':'BY AGE?'};
     var identifiers = ['class-orbit', 'sex-orbit', 'age-orbit'];
     var x_move_offscreen = {'class-orbit':0, 'sex-orbit':1000, 'age-orbit':-1000};
     var y_move_offscreen = {'class-orbit':-1000, 'sex-orbit':1000, 'age-orbit':1000};
@@ -192,6 +196,11 @@ function draw(geo_data) {
           .duration(long_duration)
           .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')');
 
+        clicked_orbit.select('text.orbital-circle-text')
+          .transition()
+          .duration(default_duration)
+          .text(back_text);
+
         setClickedOrbitReturnOnClickEvent(clicked_orbit);
 
         for (var i = 0; i < identifiers.length; i++) {
@@ -221,6 +230,13 @@ function draw(geo_data) {
             .duration(default_duration)
             .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')');
         }
+
+        var clicked_orbit_id = clicked_orbit.attr('id');
+
+        clicked_orbit.select('text.orbital-circle-text')
+          .transition()
+          .duration(default_duration)
+          .text(id_to_category_map[clicked_orbit_id]);
 
         setClickedOrbitScatterOnClickEvent(clicked_orbit);
         
