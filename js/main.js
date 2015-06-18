@@ -1,4 +1,4 @@
-function draw(geo_data) {
+function draw() {
     "use strict";
     var margin = 75,
         width = 1400 - margin,
@@ -125,6 +125,9 @@ function draw(geo_data) {
           .attr('r', 0)
           .attr('cx', 0)
           .attr('cy', 0)
+          .attr('fill', '#FF9E2E')
+          .attr('stroke', 'black')
+          .attr('stroke-width', 1)
           .transition()
           .duration(1000)
           .attr('r', smaller_radius);
