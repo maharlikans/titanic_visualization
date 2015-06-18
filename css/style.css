@@ -1,28 +1,19 @@
-circle {
-    fill: orange;
-    stroke: black;
-    stroke-width: 0.7;
-    opacity: 0.7;
+body {
+  font: 10px sans-serif;
 }
 
-h2 {
-    text-align: center;
-    color: black;
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }
 
-div.years_buttons {
-    position: fixed;
-    top: 5px;
-    left: 50px;
+.bar {
+  fill: steelblue;
 }
-
-div.years_buttons div {
-    background-color: rgb(251, 201, 127);
-    padding: 3px;
-    margin: 7px;
+/*
+.x.axis path {
+  display: none;
 }
-
-g.main, g.orbit {
-    cursor:pointer;
-    pointer-events: all;
-}
+*/
