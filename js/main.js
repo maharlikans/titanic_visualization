@@ -1,25 +1,26 @@
 function draw() {
     "use strict";
-    var margin = 75,
-        width = 1400 - margin,
-        height = 600 - margin;
+    var margin = {top: 40, right: 20, bottom: 30, left: 40},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
 
-    var center_x = (width + margin)/2;
-    var center_y = (height + margin)/2;
+    var center_x = (width + margin.left + margin.right)/2;
+    var center_y = (height + margin.top + margin.bottom)/2;
     var main_radius = 200;
-    var smaller_radius = 80;
+    var smaller_radius = 50;
     var default_duration = 300;
     var long_duration = default_duration*2;
     var fade_duration = 500;
     var font = 'Lato';
     var orbital_font = 'Lato';
+    var orbital_font_size = 18;
     var title_font_size = 24;
 
     // strings
     var back_text = '<- BACK?';
 
     // orbit properties
-    var rotation_radius = 200;
+    var rotation_radius = 180;
     var num_circles = 3;
     var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
     var id_to_category_map = {'class-orbit':'BY CLASS?', 'sex-orbit':'BY SEX?', 'age-orbit':'BY AGE?'};
@@ -37,8 +38,8 @@ function draw() {
 
     var svg = d3.select("body")
         .append("svg")
-        .attr("width", width + margin)
-        .attr("height", height + margin)
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
         .append('g')
         .attr('class', 'screen');
 
@@ -135,13 +136,13 @@ function draw() {
         new_group.append('text')
           .attr('class', 'orbital-circle-text')
           .attr('x', 0)
-          .attr('y', title_font_size/2)
+          .attr('y', orbital_font_size/2)
           .attr('font-size', '0px')
           .attr('fill', 'white')
           .transition()
           .duration(1000)
           .attr('font-family', font)
-          .attr('font-size', title_font_size + 'px')
+          .attr('font-size', orbital_font_size + 'px')
           .attr('fill', 'black')
           .style('text-anchor', 'middle')
           .text(category_text[i]);

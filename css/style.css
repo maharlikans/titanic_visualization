@@ -12,6 +12,11 @@ body {
 .bar {
   fill: steelblue;
 }
+
+.orbit,
+.main {
+  cursor: pointer;
+}
 /*
 .x.axis path {
   display: none;
