@@ -7,7 +7,6 @@ function draw() {
     var center_x = (width + margin.left + margin.right)/2;
     var center_y = (height + margin.top + margin.bottom)/2;
     var main_radius = 200;
-    var smaller_radius = 50;
     var default_duration = 300;
     var long_duration = default_duration*2;
     var fade_duration = 500;
@@ -17,9 +16,10 @@ function draw() {
     var title_font_size = 24;
 
     // strings
-    var back_text = '<- BACK?';
+    var back_text = '<';
 
     // orbit properties
+    var orbit_radius = 50;
     var rotation_radius = 180;
     var num_circles = 3;
     var category_text = ['BY CLASS?', 'BY SEX?', 'BY AGE?'];
@@ -32,9 +32,12 @@ function draw() {
     var circles = [];
     var radians_in_circle = 2*Math.PI;
 
+    // orbit displaying on chart 
+    var orbit_radius_chart = 10;
+
     // where the clicked circle will sit
     var back_circle_x = width * (7.0/8.0);
-    var back_circle_y = height * (1.0/5.0);
+    var back_circle_y = 0 + (margin.top/2);
 
     var svg = d3.select("body")
         .append("svg")
@@ -131,7 +134,7 @@ function draw() {
           .attr('stroke-width', 1)
           .transition()
           .duration(1000)
-          .attr('r', smaller_radius);
+          .attr('r', orbit_radius);
 
         new_group.append('text')
           .attr('class', 'orbital-circle-text')
@@ -198,7 +201,13 @@ function draw() {
 
         clicked_orbit.transition()
           .duration(long_duration)
-          .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')');
+          .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')')
+          .each('end', disable_mouse_events);
+
+        clicked_orbit.select('circle.orbital-circle') 
+          .transition()
+          .duration(default_duration)
+          .attr('r', orbit_radius_chart);
 
         clicked_orbit.select('text.orbital-circle-text')
           .transition()
@@ -214,7 +223,8 @@ function draw() {
             var current_y = other_orbit.node().getBBox().y;
             other_orbit.transition()
               .duration(default_duration)
-              .attr('transform', 'translate(' + (center_x + current_x + x_move_offscreen[identifiers[i]]) + ',' + (center_y + current_y + y_move_offscreen[identifiers[i]]) + ')');
+              .attr('transform', 'translate(' + (center_x + current_x + x_move_offscreen[identifiers[i]]) + ',' + (center_y + current_y + y_move_offscreen[identifiers[i]]) + ')')
+              .each('end', disable_mouse_events);
           }
         }
       });
@@ -232,7 +242,8 @@ function draw() {
           var current_orbit = d3.select('g#' + current_orbit_id);
           current_orbit.transition()
             .duration(default_duration)
-            .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')');
+            .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')')
+            .each('end', disable_mouse_events);
         }
 
         var clicked_orbit_id = clicked_orbit.attr('id');
@@ -241,6 +252,11 @@ function draw() {
           .transition()
           .duration(default_duration)
           .text(id_to_category_map[clicked_orbit_id]);
+
+        clicked_orbit.select('circle.orbital-circle') 
+          .transition()
+          .duration(default_duration)
+          .attr('r', orbit_radius);
 
         setClickedOrbitScatterOnClickEvent(clicked_orbit);
         
@@ -254,6 +270,14 @@ function draw() {
       cartesian_coordinates['x'] = x;
       cartesian_coordinates['y'] = y;
       return cartesian_coordinates;
+    }
+
+    function show_sex_chart() {
+
+    }
+
+    function disable_mouse_events() {
+      d3.select(this).attr("pointer-events", null);
     }
   
 };
