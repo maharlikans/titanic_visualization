@@ -79,7 +79,7 @@ function draw() {
                    .style('text-anchor', 'middle')
                    .text(function(d){return d;});
 
-    main_navigation.on('mouseenter', function() {
+    main_navigation.on('mouseover', function() {
       main_navigation
         .transition()
         .duration(default_duration)
@@ -159,108 +159,117 @@ function draw() {
           .attr('transform', 'translate(' + (center_x + new_x)  + ',' + (center_y + new_y) + ')');
       }
 
-      function setOrbitMouseEvents() {
-        svg.selectAll('g.orbit')
-          .on('mouseover', function() {
-            var orbit = d3.select(this);
+      window.setTimeout(setAllOrbitMouseEvents, 800);
+    }
 
-            orbit.select('circle.orbital-circle')
-              .transition()
-              .duration(default_duration)
-              .style('stroke-width', 3);
+    function orbitMouseover() {
+      var orbit = d3.select(this);
 
-            orbit.select('text.orbital-circle-text')
-              .transition()
-              .duration(default_duration)
-              .attr('fill', 'white');
-          })
-          .on('mouseout', function() {
-            var orbit = d3.select(this);
+      orbit.select('circle.orbital-circle')
+        .transition()
+        .duration(default_duration)
+        .style('stroke-width', 3);
 
-            orbit.select('circle.orbital-circle')
-              .transition()
-              .duration(default_duration)
-              .style('stroke-width', 1);
+      orbit.select('text.orbital-circle-text')
+        .transition()
+        .duration(default_duration)
+        .attr('fill', 'white');
+    }
 
-            orbit.select('text.orbital-circle-text')
-              .transition()
-              .duration(default_duration)
-              .attr('fill', 'black');
-          })
-          .call(setClickedOrbitScatterOnClickEvent);
+    function orbitMouseout() {
+      var orbit = d3.select(this);
 
+      orbit.select('circle.orbital-circle')
+        .transition()
+        .duration(default_duration)
+        .style('stroke-width', 1);
+
+      orbit.select('text.orbital-circle-text')
+        .transition()
+        .duration(default_duration)
+        .attr('fill', 'black');
+    }
+
+    function originalOrbitClick() {
+      var clicked_orbit = d3.select(this);
+      console.log(clicked_orbit);
+      var clicked_id = clicked_orbit.attr('id');
+
+      clicked_orbit.transition()
+        .duration(long_duration)
+        .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')')
+
+      clicked_orbit.select('circle.orbital-circle') 
+        .transition()
+        .duration(default_duration)
+        .attr('r', orbit_radius_chart);
+
+      clicked_orbit.select('text.orbital-circle-text')
+        .transition()
+        .duration(default_duration)
+        .text(back_text);
+
+      clicked_orbit.on('click', returnOrbitClick);
+
+      for (var i = 0; i < identifiers.length; i++) {
+        if (!(clicked_id == identifiers[i])) {
+          var other_orbit = d3.select('g#' + identifiers[i]);
+          var current_x = other_orbit.node().getBBox().x;
+          var current_y = other_orbit.node().getBBox().y;
+          other_orbit.transition()
+            .duration(default_duration)
+            .attr('transform', 'translate(' + (center_x + current_x + x_move_offscreen[identifiers[i]]) + ',' + (center_y + current_y + y_move_offscreen[identifiers[i]]) + ')')
+        }
+      }
+    }
+
+    function setOrbitMouseEvents() {
+      d3.select(this)
+        .on('mouseover', orbitMouseover)
+        .on('mouseout', orbitMouseout)
+        .on('click', originalOrbitClick);
+    }
+
+    function nullifyOrbitMouseEvents() {
+      d3.select(this)
+        .on('mouseover', null)
+        .on('mouseout', null)
+        .on('click', null);
+    }
+
+    function setAllOrbitMouseEvents() {
+      svg.selectAll('g.orbit')
+        .on('mouseover', orbitMouseover)
+        .on('mouseout', orbitMouseout)
+        .on('click', originalOrbitClick);
+    }
+
+    function returnOrbitClick() {
+      var clicked_orbit = d3.select(this);
+
+      // for each of the orbits, return them to their original location
+      for (var i = 0; i < identifiers.length; i++) {
+        var current_orbit_id = identifiers[i];
+        var current_orbit = d3.select('g#' + current_orbit_id);
+        current_orbit.transition()
+          .duration(default_duration)
+          .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')')
       }
 
-      window.setTimeout(setOrbitMouseEvents, 800);
-    }
+      var clicked_orbit_id = clicked_orbit.attr('id');
 
-    function setClickedOrbitScatterOnClickEvent(clicked_orbit) {
-      clicked_orbit.on('click', function() {
-        var clicked_orbit = d3.select(this);
-        var clicked_id = clicked_orbit.attr('id');
+      clicked_orbit.select('text.orbital-circle-text')
+        .transition()
+        .duration(default_duration)
+        .text(id_to_category_map[clicked_orbit_id]);
 
-        clicked_orbit.transition()
-          .duration(long_duration)
-          .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')')
-          .each('end', disable_mouse_events);
+      clicked_orbit.select('circle.orbital-circle') 
+        .transition()
+        .duration(default_duration)
+        .attr('r', orbit_radius);
 
-        clicked_orbit.select('circle.orbital-circle') 
-          .transition()
-          .duration(default_duration)
-          .attr('r', orbit_radius_chart);
-
-        clicked_orbit.select('text.orbital-circle-text')
-          .transition()
-          .duration(default_duration)
-          .text(back_text);
-
-        setClickedOrbitReturnOnClickEvent(clicked_orbit);
-
-        for (var i = 0; i < identifiers.length; i++) {
-          if (!(clicked_id == identifiers[i])) {
-            var other_orbit = d3.select('g#' + identifiers[i]);
-            var current_x = other_orbit.node().getBBox().x;
-            var current_y = other_orbit.node().getBBox().y;
-            other_orbit.transition()
-              .duration(default_duration)
-              .attr('transform', 'translate(' + (center_x + current_x + x_move_offscreen[identifiers[i]]) + ',' + (center_y + current_y + y_move_offscreen[identifiers[i]]) + ')')
-              .each('end', disable_mouse_events);
-          }
-        }
-      });
-    }
-
-    // sets event on clicked orbit to return it and all other orbits to their
-    // original locations at the beginning of the visualization
-    function setClickedOrbitReturnOnClickEvent(clicked_orbit) {
-      clicked_orbit.on('click', function() {
-        var clicked_orbit = d3.select(this);
-
-        // for each of the orbits, return them to their original location
-        for (var i = 0; i < identifiers.length; i++) {
-          var current_orbit_id = identifiers[i];
-          var current_orbit = d3.select('g#' + current_orbit_id);
-          current_orbit.transition()
-            .duration(default_duration)
-            .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')')
-            .each('end', disable_mouse_events);
-        }
-
-        var clicked_orbit_id = clicked_orbit.attr('id');
-
-        clicked_orbit.select('text.orbital-circle-text')
-          .transition()
-          .duration(default_duration)
-          .text(id_to_category_map[clicked_orbit_id]);
-
-        clicked_orbit.select('circle.orbital-circle') 
-          .transition()
-          .duration(default_duration)
-          .attr('r', orbit_radius);
-
-        setClickedOrbitScatterOnClickEvent(clicked_orbit);
-        
-      });
+      clicked_orbit.on('click', originalOrbitClick);
+      
     }
 
     function polarToCartesianCoordinates(r, theta) {
@@ -276,7 +285,7 @@ function draw() {
 
     }
 
-    function disable_mouse_events() {
+    function reenable_mouse_events() {
       d3.select(this).attr("pointer-events", null);
     }
   
