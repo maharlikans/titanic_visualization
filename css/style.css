@@ -13,12 +13,8 @@ body {
   fill: steelblue;
 }
 
-.orbit,
-.main {
+g.orbit,
+g.main {
   cursor: pointer;
+  pointer-events: all;
 }
-/*
-.x.axis path {
-  display: none;
-}
-*/

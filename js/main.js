@@ -156,10 +156,9 @@ function draw() {
 
         new_group.transition()
           .duration(1000)
-          .attr('transform', 'translate(' + (center_x + new_x)  + ',' + (center_y + new_y) + ')');
+          .attr('transform', 'translate(' + (center_x + new_x)  + ',' + (center_y + new_y) + ')')
+          .each('end', setOrbitMouseEventsOriginal);
       }
-
-      window.setTimeout(setAllOrbitMouseEvents, 800);
     }
 
     function orbitMouseover() {
@@ -192,12 +191,7 @@ function draw() {
 
     function originalOrbitClick() {
       var clicked_orbit = d3.select(this);
-      console.log(clicked_orbit);
       var clicked_id = clicked_orbit.attr('id');
-
-      clicked_orbit.transition()
-        .duration(long_duration)
-        .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')')
 
       clicked_orbit.select('circle.orbital-circle') 
         .transition()
@@ -209,7 +203,11 @@ function draw() {
         .duration(default_duration)
         .text(back_text);
 
-      clicked_orbit.on('click', returnOrbitClick);
+      clicked_orbit.call(nullifyOrbitMouseEvents)
+        .transition()
+        .duration(long_duration)
+        .attr('transform', 'translate(' + back_circle_x + ',' + back_circle_y + ')')
+        .each('end', setOrbitMouseEventsReturn);
 
       for (var i = 0; i < identifiers.length; i++) {
         if (!(clicked_id == identifiers[i])) {
@@ -223,27 +221,6 @@ function draw() {
       }
     }
 
-    function setOrbitMouseEvents() {
-      d3.select(this)
-        .on('mouseover', orbitMouseover)
-        .on('mouseout', orbitMouseout)
-        .on('click', originalOrbitClick);
-    }
-
-    function nullifyOrbitMouseEvents() {
-      d3.select(this)
-        .on('mouseover', null)
-        .on('mouseout', null)
-        .on('click', null);
-    }
-
-    function setAllOrbitMouseEvents() {
-      svg.selectAll('g.orbit')
-        .on('mouseover', orbitMouseover)
-        .on('mouseout', orbitMouseout)
-        .on('click', originalOrbitClick);
-    }
-
     function returnOrbitClick() {
       var clicked_orbit = d3.select(this);
 
@@ -251,9 +228,11 @@ function draw() {
       for (var i = 0; i < identifiers.length; i++) {
         var current_orbit_id = identifiers[i];
         var current_orbit = d3.select('g#' + current_orbit_id);
-        current_orbit.transition()
+        current_orbit.call(nullifyOrbitMouseEvents)
+          .transition()
           .duration(default_duration)
           .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')')
+          .each('end', setOrbitMouseEventsOriginal);
       }
 
       var clicked_orbit_id = clicked_orbit.attr('id');
@@ -272,6 +251,27 @@ function draw() {
       
     }
 
+    function setOrbitMouseEventsOriginal() {
+      d3.select(this)
+        .on('mouseover', orbitMouseover)
+        .on('mouseout', orbitMouseout)
+        .on('click', originalOrbitClick);
+    }
+
+    function setOrbitMouseEventsReturn() {
+      d3.select(this)
+        .on('mouseover', orbitMouseover)
+        .on('mouseout', orbitMouseout)
+        .on('click', returnOrbitClick);
+    }
+
+    function nullifyOrbitMouseEvents() {
+      d3.select(this)
+        .on('mouseover', null)
+        .on('mouseout', null)
+        .on('click', null);
+    }
+
     function polarToCartesianCoordinates(r, theta) {
       var cartesian_coordinates = [];
       var x = r*Math.cos(theta);
@@ -283,10 +283,6 @@ function draw() {
 
     function show_sex_chart() {
 
-    }
-
-    function reenable_mouse_events() {
-      d3.select(this).attr("pointer-events", null);
     }
   
 };
