@@ -228,11 +228,9 @@ function draw() {
       for (var i = 0; i < identifiers.length; i++) {
         var current_orbit_id = identifiers[i];
         var current_orbit = d3.select('g#' + current_orbit_id);
-        current_orbit.call(nullifyOrbitMouseEvents)
-          .transition()
+        current_orbit.transition()
           .duration(default_duration)
-          .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')')
-          .each('end', setOrbitMouseEventsOriginal);
+          .attr('transform', 'translate(' + x_orbit_original[current_orbit_id] + ',' + (y_orbit_original[current_orbit_id]) + ')');
       }
 
       var clicked_orbit_id = clicked_orbit.attr('id');
@@ -266,6 +264,7 @@ function draw() {
     }
 
     function nullifyOrbitMouseEvents() {
+      console.log('hey');
       d3.select(this)
         .on('mouseover', null)
         .on('mouseout', null)

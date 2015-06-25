@@ -97,18 +97,22 @@ d3.csv("data/train.csv", function(error, data) {
 
   svg.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .attr("transform", "translate(0," + height + ")");
 
   svg.append("g")
       .attr("class", "y axis")
-      .call(yAxis)
     .append("text")
       .attr("transform", "rotate(-90)")
+      .attr("x", -height)
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Count");
+      .text("Count")
+      .style("opacity", 0)
+      .transition()
+      .attr("x", 0)
+      .duration(1000)
+      .style("opacity", 1)
 
   var sex = svg.selectAll(".sex")
       .data(titanic_total)
@@ -150,9 +154,32 @@ d3.csv("data/train.csv", function(error, data) {
 
   svg.append("text")
       .attr("x", ((width)/ 2))             
-      .attr("y", 0 - (margin.top / 2))
+      .attr("y", height)
       .attr("text-anchor", "middle")  
       .attr("class", "title")
       .style("font-size", "16px") 
-      .text("Deaths on the Titanic Disaster by Sex");
+      .text("Deaths on the Titanic Disaster by Sex")
+      .style("opacity", 0)
+      .transition()
+      .duration(1000)
+      .attr("x", ((width)/ 2))             
+      .attr("y", 0 - (margin.top / 2))
+      .style("opacity", 1);
+
+  // transition axes from bottom left corner to full size
+  y.range([height,height]);
+  svg.select(".y.axis").call(yAxis);
+  y.range([height,0])
+  svg.select(".y.axis")
+      .transition()
+      .duration(1000)
+      .call(yAxis);
+      
+  x0.rangeRoundBands([0, 0], .3);
+  svg.select(".x.axis").call(xAxis);
+  x0.rangeRoundBands([0, width], .3);
+  svg.select(".x.axis")
+      .transition()
+      .duration(1000)
+      .call(xAxis);
 });
