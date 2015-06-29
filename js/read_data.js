@@ -72,7 +72,6 @@ d3.csv("data/train.csv", function(error, data) {
   male_titanic_data = {
     sex: 'male',
     data: [
-      // TODO begin here, restructure this so that the error disappears from
       {name: 'survivors', value: male_survivors},
       {name: 'deaths', value: (male - male_survivors)}
     ]
@@ -128,16 +127,17 @@ d3.csv("data/train.csv", function(error, data) {
       .attr("x", function(d) { return x1(d.name); })
       .attr("y", height)
       .attr("height", 0)
+      .style("opacity", 0)
       .transition()
       .duration(1000)
+      .style("opacity", 1)
       .attr("y", function(d) { console.log(y(d.value)); return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); });
+      .attr("height", function(d) { return height - y(d.value); })
 
   var legend = svg.selectAll(".legend")
       .data(['survivors', 'deaths'].slice().reverse())
     .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+      .attr("class", "legend");
 
   legend.append("rect")
       .attr("x", width - 18)
@@ -151,6 +151,14 @@ d3.csv("data/train.csv", function(error, data) {
       .attr("dy", ".35em")
       .style("text-anchor", "end")
       .text(function(d) { return d; });
+
+  legend
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + height + ")")
+    .transition()
+    .duration(1000)
+    .style("opacity", 1)
+    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
   svg.append("text")
       .attr("x", ((width)/ 2))             
@@ -171,15 +179,19 @@ d3.csv("data/train.csv", function(error, data) {
   svg.select(".y.axis").call(yAxis);
   y.range([height,0])
   svg.select(".y.axis")
+      .style("opacity", 0)
       .transition()
       .duration(1000)
+      .style("opacity", 1)
       .call(yAxis);
       
   x0.rangeRoundBands([0, 0], .3);
   svg.select(".x.axis").call(xAxis);
   x0.rangeRoundBands([0, width], .3);
   svg.select(".x.axis")
+      .style("opacity", 0)
       .transition()
       .duration(1000)
+      .style("opacity", 1)
       .call(xAxis);
 });

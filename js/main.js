@@ -7,11 +7,12 @@ function draw() {
     var center_x = (width + margin.left + margin.right)/2;
     var center_y = (height + margin.top + margin.bottom)/2;
     var main_radius = 200;
+    var short_duration = 100;
     var default_duration = 300;
     var long_duration = default_duration*2;
     var fade_duration = 500;
-    var font = 'Lato';
-    var orbital_font = 'Lato';
+    var font = "Lato";
+    var orbital_font = "Lato";
     var orbital_font_size = 18;
     var title_font_size = 24;
 
@@ -144,7 +145,6 @@ function draw() {
           .attr('fill', 'white')
           .transition()
           .duration(1000)
-          .attr('font-family', font)
           .attr('font-size', orbital_font_size + 'px')
           .attr('fill', 'black')
           .style('text-anchor', 'middle')
@@ -164,29 +164,33 @@ function draw() {
     function orbitMouseover() {
       var orbit = d3.select(this);
 
-      orbit.select('circle.orbital-circle')
-        .transition()
-        .duration(default_duration)
-        .style('stroke-width', 3);
-
       orbit.select('text.orbital-circle-text')
         .transition()
         .duration(default_duration)
         .attr('fill', 'white');
+
+      /*
+      orbit.select('circle.orbital-circle')
+        .transition()
+        .duration(default_duration)
+        .attr('fill', '#38BDFF');
+      */
     }
 
     function orbitMouseout() {
       var orbit = d3.select(this);
 
-      orbit.select('circle.orbital-circle')
-        .transition()
-        .duration(default_duration)
-        .style('stroke-width', 1);
-
       orbit.select('text.orbital-circle-text')
         .transition()
         .duration(default_duration)
         .attr('fill', 'black');
+
+      /*
+      orbit.select('circle.orbital-circle')
+        .transition()
+        .duration(default_duration)
+        .attr('fill', '#FF9E2E');
+        */
     }
 
     function originalOrbitClick() {
