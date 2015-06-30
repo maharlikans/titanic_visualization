@@ -11,8 +11,8 @@ function draw() {
     var default_duration = 300;
     var long_duration = default_duration*2;
     var fade_duration = 500;
-    var font = "Lato";
-    var orbital_font = "Lato";
+    var font = "Roboto";
+    var orbital_font = "Oswald";
     var orbital_font_size = 18;
     var title_font_size = 24;
 
