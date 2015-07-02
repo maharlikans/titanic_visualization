@@ -28,7 +28,13 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data/train.csv", function(error, data) {  
+/* Initialize tooltip */
+tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return d.name + ": " + d.value; });
+
+/* Invoke the tip in the context of your visualization */
+svg.call(tip);
+
+d3.csv("data/train.csv", function(error, data) {
   // shape data into desired form 
   var titanic_data = {};
   var total = 0,
@@ -124,15 +130,18 @@ d3.csv("data/train.csv", function(error, data) {
     .enter().append("rect")
       .attr("width", x1.rangeBand())
       .style("fill", function(d) { return color(d.name); })
+      .attr("class", function(d) { return d.name; })
       .attr("x", function(d) { return x1(d.name); })
       .attr("y", height)
       .attr("height", 0)
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide)
       .style("opacity", 0)
       .transition()
       .duration(1000)
       .style("opacity", 1)
       .attr("y", function(d) { console.log(y(d.value)); return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); });
 
   var legend = svg.selectAll(".legend")
       .data(['survivors', 'deaths'].slice().reverse())
