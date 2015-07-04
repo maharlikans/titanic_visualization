@@ -28,12 +28,6 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-/* Initialize tooltip */
-tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return d.name + ": " + d.value; });
-
-/* Invoke the tip in the context of your visualization */
-svg.call(tip);
-
 d3.csv("data/train.csv", function(error, data) {
   // shape data into desired form 
   var titanic_data = {};
@@ -134,14 +128,37 @@ d3.csv("data/train.csv", function(error, data) {
       .attr("x", function(d) { return x1(d.name); })
       .attr("y", height)
       .attr("height", 0)
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide)
       .style("opacity", 0)
-      .transition()
-      .duration(1000)
-      .style("opacity", 1)
-      .attr("y", function(d) { console.log(y(d.value)); return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); });
+      .on("mouseover", function(d) {
+        tooltip.transition()        
+          .duration(200)      
+          .style("opacity", 1);      
+        tooltip.html(d.name + "<br/>"  + d.value)  
+          .style("left", d3.event.pageX + "px")     
+          .style("top", d3.event.pageY + "px");    
+      })                  
+      .on("mouseout", function(d) {       
+        tooltip.transition()        
+          .duration(500)      
+          .style("opacity", 0);   
+      })
+      .append("title")
+        .text(function(d) {return d.name + ": " + d.value;});
+
+  sex.selectAll("rect")
+    .transition()
+    .duration(1000)
+    .style("opacity", 1)
+    .attr("y", function(d) { return y(d.value); })
+    .attr("height", function(d) { return height - y(d.value); });
+
+  function appendTitle() {
+    d3.select(this).append("title").text("HEY");
+  }
+
+  var tooltip = svg.append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 1);
 
   var legend = svg.selectAll(".legend")
       .data(['survivors', 'deaths'].slice().reverse())
@@ -149,17 +166,17 @@ d3.csv("data/train.csv", function(error, data) {
       .attr("class", "legend");
 
   legend.append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
+    .attr("x", width - 18)
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", color);
 
   legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d; });
+    .attr("x", width - 24)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text(function(d) { return d; });
 
   legend
     .style("opacity", 0)
@@ -170,37 +187,38 @@ d3.csv("data/train.csv", function(error, data) {
     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
   svg.append("text")
-      .attr("x", ((width)/ 2))             
-      .attr("y", height)
-      .attr("text-anchor", "middle")  
-      .attr("class", "title")
-      .style("font-size", "16px") 
-      .text("Deaths on the Titanic Disaster by Sex")
-      .style("opacity", 0)
-      .transition()
-      .duration(1000)
-      .attr("x", ((width)/ 2))             
-      .attr("y", 0 - (margin.top / 2))
-      .style("opacity", 1);
+    .attr("x", ((width)/ 2))             
+    .attr("y", height)
+    .attr("text-anchor", "middle")  
+    .attr("class", "title")
+    .style("font-size", "16px") 
+    .text("Deaths on the Titanic Disaster by Sex")
+    .style("opacity", 0)
+    .transition()
+    .duration(1000)
+    .attr("x", ((width)/ 2))             
+    .attr("y", 0 - (margin.top / 2))
+    .style("opacity", 1);
 
   // transition axes from bottom left corner to full size
   y.range([height,height]);
   svg.select(".y.axis").call(yAxis);
   y.range([height,0])
   svg.select(".y.axis")
-      .style("opacity", 0)
-      .transition()
-      .duration(1000)
-      .style("opacity", 1)
-      .call(yAxis);
+    .style("opacity", 0)
+    .transition()
+    .duration(1000)
+    .style("opacity", 1)
+    .call(yAxis);
       
   x0.rangeRoundBands([0, 0], .3);
   svg.select(".x.axis").call(xAxis);
   x0.rangeRoundBands([0, width], .3);
   svg.select(".x.axis")
-      .style("opacity", 0)
-      .transition()
-      .duration(1000)
-      .style("opacity", 1)
-      .call(xAxis);
+    .style("opacity", 0)
+    .transition()
+    .duration(1000)
+    .style("opacity", 1)
+    .call(xAxis);
+
 });

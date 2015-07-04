@@ -18,9 +18,3 @@ g.main {
   cursor: pointer;
   pointer-events: all;
 }
-
-text.title-text,
-text.orbital-circle-text
-{
-  font-family: 'Lato', sans-serif;
-}
